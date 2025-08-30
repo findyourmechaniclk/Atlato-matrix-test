@@ -1,0 +1,30 @@
+
+<button nz-button nzType="primary" nz-popover
+        [(nzPopoverVisible)]="popoverVisible"
+        [nzPopoverTrigger]="'click'"
+        [nzPopoverPlacement]="'bottom'"
+        [nzPopoverContent]="iconPopover">
+  Choose Icon
+</button>
+
+
+<div class="selected-item-card" *ngIf="selectedIcon">
+  <div class="card-header">
+    <div class="selected-icon-large" [innerHTML]="selectedIcon.svg"></div>
+    <div class="card-info">
+      <h4 class="icon-title">{{ selectedIcon.icon }}</h4>
+      <p class="icon-label">{{ selectedIcon.label }}</p>
+    </div>
+    <button class="card-clear-btn" (click)="clearSelection()" title="Remove selection">
+      <i class="fas fa-trash"></i>
+    </button>  </div>
+</div>
+
+<!-- Popover Content Template -->
+<ng-template #iconPopover>
+  <app-common-icon-picker
+    [selectedIcon]="selectedIcon"
+    (iconSelected)="onIconSelected($event)"
+    (iconCleared)="onIconCleared()">
+  </app-common-icon-picker>
+</ng-template>

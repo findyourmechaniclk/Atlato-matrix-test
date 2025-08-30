@@ -1,0 +1,271 @@
+<div class="color-picker-container"
+     (mousemove)="onMouseMove($event)"
+     (mouseup)="onMouseUp()"
+     (mouseleave)="onMouseUp()">
+
+  <!-- Header Tabs -->
+  <div class="color-picker-header" *ngIf="dualMode">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <button class="nav-link"
+                [class.active]="activeTab === 'light'"
+                [class.selected]="lightColorSelected"
+                (click)="switchTab('light')">
+          <span class="tab-icon">☀️</span>
+          Light
+          <span class="selection-indicator" *ngIf="lightColorSelected">✓</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link"
+                [class.active]="activeTab === 'dark'"
+                [class.selected]="darkColorSelected"
+                (click)="switchTab('dark')">
+          <span class="tab-icon">🌙</span>
+          Dark
+          <span class="selection-indicator" *ngIf="darkColorSelected">✓</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+<div class ="w-100 overflow-y-scroll overflow-x-hidden" style="height: 80vh;">
+  <!-- Main Color Picker Area -->
+  <div class="color-picker-main">
+    <!-- Color Canvas -->
+    <div class="color-canvas-container">
+      <canvas #colorCanvas
+              class="color-canvas"
+              width="300"
+              height="200"
+              (mousedown)="onColorCanvasMouseDown($event)">
+      </canvas>
+      <!-- Color picker indicator -->
+      <div class="color-picker-indicator"
+           [style.left.px]="(currentColor.hsv.s / 100) * 300 - 6"
+           [style.top.px]="(1 - currentColor.hsv.v / 100) * 200 - 6">
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="color-controls">
+      <!-- Selected Color Display -->
+      <div class="align-items-center w-100 d-flex justify-content-center">
+        <div class="selected-color-display align-items-center w-100">
+          <div class="color-preview"
+               [style.background-color]="'rgba(' + currentColor.r + ',' + currentColor.g + ',' + currentColor.b + ',' + currentColor.a + ')'">
+          </div>
+        </div>
+      </div>
+
+      <!-- Light/Dark Color Comparison -->
+      <div class="color-comparison" *ngIf="dualMode">
+        <div class="comparison-item">
+          <div class="comparison-label">Light</div>
+          <div class="comparison-color"
+               [style.background-color]="'rgba(' + lightColor.r + ',' + lightColor.g + ',' + lightColor.b + ',' + lightColor.a + ')'">
+          </div>
+          <div class="comparison-status" [class.selected]="lightColorSelected">
+            <span *ngIf="lightColorSelected">✓</span>
+          </div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-label">Dark</div>
+          <div class="comparison-color"
+               [style.background-color]="'rgba(' + darkColor.r + ',' + darkColor.g + ',' + darkColor.b + ',' + darkColor.a + ')'">
+          </div>
+          <div class="comparison-status" [class.selected]="darkColorSelected">
+            <span *ngIf="darkColorSelected">✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hue Slider -->
+      <div class="hue-slider-container">
+        <canvas #hueCanvas
+                class="hue-slider"
+                width="300px"
+                height="20"
+                (mousedown)="onHueCanvasMouseDown($event)">
+        </canvas>
+        <!-- Hue indicator -->
+        <div class="hue-indicator"
+             [style.left.px]="(currentColor.hsv.h / 360) * 300 - 8">
+        </div>
+      </div>
+
+      <!-- Alpha Slider (if enabled) -->
+      <div class="alpha-slider-container" *ngIf="showAlpha">
+        <div class="alpha-slider-track">
+          <div class="alpha-slider-bg"></div>
+          <div class="alpha-slider-color"
+               [style.background]="'linear-gradient(to right, transparent, rgb(' + currentColor.r + ',' + currentColor.g + ',' + currentColor.b + '))'">
+          </div>
+          <input type="range"
+                 class="alpha-slider-input"
+                 min="0"
+                 max="1"
+                 step="0.01"
+                 [(ngModel)]="currentColor.a"
+                 (input)="onRgbaChange()">
+        </div>
+        <!-- Alpha indicator -->
+        <div class="alpha-indicator"
+             [style.left.px]="currentColor.a * 300 - 8">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Values Input Section -->
+  <div class="color-values-section row">
+    <!-- Custom Dropdown for Color Mode -->
+    <div class="dropdown color-mode-dropdown col-3 mt-4">
+      <button class="btn btn-sm btn-light btn-outline-secondary dropdown-toggle" type="button" id="colorModeBtn" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ colorMode }}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="colorModeBtn">
+        <li><a class="dropdown-item" href="#" (click)="colorMode='RGBA'">RGBA</a></li>
+        <li><a class="dropdown-item" href="#" (click)="colorMode='HSLA'">HSLA</a></li>
+        <li><a class="dropdown-item" href="#" (click)="colorMode='HEX'">HEX</a></li>
+      </ul>
+    </div>
+
+
+    <!-- RGBA Inputs -->
+    <div class="color-inputs col-9" *ngIf="colorMode === 'RGBA'">
+      <div class="input-group">
+        <label>R</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="255"
+               [(ngModel)]="currentColor.r"
+               (input)="onRgbaChange()">
+      </div>
+      <div class="input-group">
+        <label>G</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="255"
+               [(ngModel)]="currentColor.g"
+               (input)="onRgbaChange()">
+      </div>
+      <div class="input-group">
+        <label>B</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="255"
+               [(ngModel)]="currentColor.b"
+               (input)="onRgbaChange()">
+      </div>
+      <div class="input-group" *ngIf="showAlpha">
+        <label>A</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="1"
+               step="0.01"
+               [(ngModel)]="currentColor.a"
+               (input)="onRgbaChange()">
+      </div>
+    </div>
+
+    <!-- HSLA Inputs -->
+    <div class="color-inputs col-9" *ngIf="colorMode === 'HSLA'">
+      <div class="input-group">
+        <label>H</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="360"
+               [value]="Math.round(currentColor.hsv.h)"
+               (input)="onHslaChange('h', $event)">
+      </div>
+      <div class="input-group">
+        <label>S</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="100"
+               [value]="Math.round(currentColor.hsv.s)"
+               (input)="onHslaChange('s', $event)">
+      </div>
+      <div class="input-group">
+        <label>L</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="100"
+               [value]="Math.round(currentColor.hsv.v)"
+               (input)="onHslaChange('v', $event)">
+      </div>
+      <div class="input-group" *ngIf="showAlpha">
+        <label>A</label>
+        <input type="number"
+               class="form-control form-control-sm"
+               min="0"
+               max="1"
+               step="0.01"
+               [(ngModel)]="currentColor.a"
+               (input)="onRgbaChange()">
+      </div>
+    </div>
+
+    <!-- HEX Input -->
+    <div class="color-inputs hex-input col-9" *ngIf="colorMode === 'HEX'">
+      <div class="input-group flex-fill">
+        <input type="text"
+               class="form-control form-control-sm w-100"
+               [(ngModel)]="currentColor.hex"
+               (input)="onHexChange()"
+               placeholder="#000000">
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Swatches -->
+  <div class="color-swatches">
+    <div class="swatch-row" *ngFor="let row of colorSwatches">
+      <button class="color-swatch rounded-circle"
+              *ngFor="let color of row"
+              [style.background-color]="color"
+              (click)="onSwatchClick(color)"
+              [title]="color">
+      </button>
+    </div>
+  </div>
+</div>
+
+  <!-- Footer Actions -->
+  <div class="color-picker-footer">
+    <div class="footer-actions">
+      <button
+        nz-button
+        nzType="default"
+        nzDanger
+        (click)="onClear()">
+        Clear
+      </button>
+
+      <div class="ms-auto d-flex gap-2">
+        <button
+          nz-button
+          nzType="default"
+          (click)="close()">
+          Cancel
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          [disabled]="!canSelect"
+          (click)="showInfoModal()">
+          Select
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

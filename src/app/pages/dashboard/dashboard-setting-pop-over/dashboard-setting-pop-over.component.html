@@ -1,0 +1,21 @@
+<ng-container *ngIf="visible">
+  <div class="custom-modal-overlay">
+    <div class="custom-modal-card" [ngStyle]="{width: width}">
+      <div class="custom-modal-header">
+        <span class="custom-modal-title">{{ title }}</span>
+        <button *ngIf="showClose" class="custom-modal-close" (click)="closeModal()" aria-label="Close" type="button">
+          <span nz-icon nzType="close"></span>
+        </button>
+      </div>
+
+      <div class="custom-modal-body">
+        <ng-content></ng-content>
+      </div>
+
+      <!-- New: sticky footer slot (projected from parent) -->
+      <div class="custom-modal-footer">
+        <ng-content select="[modal-footer]"></ng-content>
+      </div>
+    </div>
+  </div>
+</ng-container>

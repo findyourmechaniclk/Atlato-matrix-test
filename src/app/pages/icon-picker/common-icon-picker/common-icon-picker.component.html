@@ -1,0 +1,56 @@
+
+<div class="icon-picker-content">
+
+  <div class="search-section" *ngIf="!loading && !errorMessage">
+    <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Search icons by name..." class="search-input">
+    <div class="search-info">
+      <span>{{ filteredIcons.length }} of {{ icons.length }} icons</span>
+      <button *ngIf="selectedIcon" (click)="clearSelection()" class="clear-btn"> Clear Selection </button>
+    </div>
+  </div>
+
+
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading icons...</p>
+  </div>
+
+
+  <div *ngIf="errorMessage && !loading" class="error-container">
+    <i class="error-icon fa fa-exclamation-triangle"></i>
+    <p>{{ errorMessage }}</p>
+    <button (click)="retryLoad()" class="retry-btn">Try Again</button>
+  </div>
+
+
+  <div class="selected-preview" *ngIf="selectedIcon && !loading && !errorMessage">
+    <div class="preview-content">
+      <div class="preview-icon" [innerHTML]="selectedIcon.svg"></div>
+      <div class="preview-text">
+        <span class="preview-name">{{ selectedIcon.icon }}</span>
+        <span class="preview-label">{{ selectedIcon.label }}</span>
+      </div>
+      <span class="selected-badge">✓ Selected</span>
+    </div>
+  </div>
+
+
+  <div class="icon-grid" *ngIf="!loading && !errorMessage && filteredIcons.length > 0">
+    <div class="icon-item" *ngFor="let icon of filteredIcons; trackBy: trackByIcon"
+         [class.selected]="isSelected(icon)"
+         [class.highlighted]="isSelected(icon)"
+         (click)="selectIcon(icon)"
+         [attr.title]="icon.icon + ' - ' + icon.label">
+      <div class="icon-svg" [innerHTML]="icon.svg"></div>
+      <p class="icon-name">{{ icon.icon }}</p>
+      <div class="selection-indicator" *ngIf="isSelected(icon)">✓</div>
+    </div>
+  </div>
+
+
+  <div *ngIf="!loading && !errorMessage && filteredIcons.length === 0 && searchTerm" class="no-results">
+    <i class="fa-solid fa-magnifying-glass no-results-icon"></i>
+    <p>No icons found matching "{{ searchTerm }}"</p>
+    <button (click)="searchTerm = ''; onSearchChange()" class="reset-btn">Show All Icons</button>
+  </div>
+</div>

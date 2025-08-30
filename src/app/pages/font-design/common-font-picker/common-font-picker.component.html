@@ -1,0 +1,122 @@
+<div class="scrollable-content">
+  <div class="font-settings-panel" [formGroup]="fontForm">
+    <div class="panel-header">
+      <h2>Typography</h2>
+      <button type="button" class="reset-button" (click)="onResetButtonClick()">Reset All</button>
+    </div>
+
+    <!-- FONT STYLE Section -->
+    <div class="settings-section">
+      <h3 class="section-title">FONT STYLE</h3>
+      <div class="form-group">
+        <label for="fontFamily">Family</label>
+        <nz-select id="fontFamily" formControlName="family" class="custom-select">
+          <nz-option *ngFor="let family of fontFamilies" [nzValue]="family" [nzLabel]="family"></nz-option>
+        </nz-select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fontWeight">Weight</label>
+          <nz-select id="fontWeight" formControlName="weight" class="custom-select">
+            <nz-option *ngFor="let weight of fontWeights" [nzValue]="weight.value" [nzLabel]="weight.name"></nz-option>
+          </nz-select>
+        </div>
+        <div class="form-group">
+          <label for="fontStyle">Style</label>
+          <nz-select id="fontStyle" formControlName="style" class="custom-select capitalize">
+            <nz-option *ngFor="let style of fontStyles" [nzValue]="style" [nzLabel]="style"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIZING & SPACING Section  -->
+    <div class="settings-section">
+      <h3 class="section-title">SIZING & SPACING</h3>
+      <div class="form-group">
+        <label for="fontSize">Font Size ({{ currentFontSize }})</label>
+        <nz-slider
+          [nzMin]="8"
+          [nzMax]="72"
+          formControlName="size"
+          (nzOnAfterChange)="onSliderChange($event)"
+          class="font-size-slider">
+        </nz-slider>
+        <div class="input-row">
+          <input
+            type="number"
+            formControlName="size"
+            (blur)="onInputBlur($event)"
+            min="8"
+            max="72"
+            class="value-input">
+          <nz-select formControlName="unit" class="custom-select unit-selector">
+            <nz-option *ngFor="let unit of fontSizeUnits" [nzValue]="unit" [nzLabel]="unit"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Line Height ({{ currentLineHeight }})</label>
+        <nz-slider
+          [nzMin]="1"
+          [nzMax]="3"
+          [nzStep]="0.1"
+          formControlName="lineHeight">
+        </nz-slider>
+      </div>
+      <div class="form-group">
+        <label>Letter Spacing ({{ currentLetterSpacing }}px)</label>
+        <nz-slider
+          [nzMin]="-2"
+          [nzMax]="10"
+          [nzStep]="0.5"
+          formControlName="letterSpacing">
+        </nz-slider>
+      </div>
+    </div>
+
+    <!-- FORMATTING Section -->
+    <div class="settings-section">
+      <h3 class="section-title">FORMATTING</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="textTransform">Transform</label>
+          <nz-select id="textTransform" formControlName="textTransform" class="custom-select">
+            <nz-option [nzValue]="'none'" [nzLabel]="'None'"></nz-option>
+            <nz-option [nzValue]="'capitalize'" [nzLabel]="'Capitalize'"></nz-option>
+            <nz-option [nzValue]="'uppercase'" [nzLabel]="'UPPERCASE'"></nz-option>
+            <nz-option [nzValue]="'lowercase'" [nzLabel]="'lowercase'"></nz-option>
+          </nz-select>
+        </div>
+        <div class="form-group">
+          <label for="textDecoration">Decoration</label>
+          <nz-select id="textDecoration" formControlName="textDecoration" class="custom-select capitalize">
+            <nz-option *ngFor="let decoration of textDecorations" [nzValue]="decoration" [nzLabel]="decoration"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW Section -->
+    <div class="preview-section">
+      <div class="preview-header">
+        <h3 class="section-title">PREVIEW</h3>
+        <span class="font-info">{{ fontForm.value.family }} {{ currentFontWeightName }} / {{ currentFontSize }}</span>
+      </div>
+      <div class="preview-box"
+           #previewBox
+           contenteditable="true"
+           (input)="fontForm.patchValue({ previewText: $any($event.target).innerText })"
+           [ngStyle]="previewStyle">
+        {{ transformedPreviewText }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fixed-footer">
+  <button nz-button nzSize="small" (click)="onCancelClick()">Cancel</button>
+  <button nz-button nzType="primary" nzSize="small" (click)="onSaveClick()">Save</button>
+</div>
+
+

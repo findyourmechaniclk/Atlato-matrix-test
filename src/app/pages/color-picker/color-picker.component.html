@@ -1,0 +1,29 @@
+<div class="square-container">
+  <ng-template #popoverTpl>
+    <app-color-picker-pop-over
+      *ngIf="isPopoverVisible"
+      (closePopoverEvent)="closePopover()"
+      (dualColorSelect)="receiveColors($event)"
+      [initialLightColor]="getInitialLightColor()"
+      [initialDarkColor]="getInitialDarkColor()">
+    </app-color-picker-pop-over>
+  </ng-template>
+
+  <button
+    class="btn square-color-btn"
+    [ngStyle]="light && dark ? {
+      'background': 'linear-gradient(to right, rgba(' + light.r + ',' + light.g + ',' + light.b + ',' + light.a + ') 50%, rgba(' + dark.r + ',' + dark.g + ',' + dark.b + ',' + dark.a + ') 50%)'
+    } : null"
+    [ngClass]="{'comparison-color-fallback': !light || !dark}"
+    nz-popover
+    [nzPopoverContent]="popoverTpl"
+    [nzPopoverTrigger]=null
+    (click)="togglePopover()"
+    [(nzPopoverVisible)]="isPopoverVisible"
+    nzPopoverPlacement="right">
+
+    <span class="light-icon">☀️</span>
+    <span class="dark-icon">🌙</span>
+  </button>
+</div>
+

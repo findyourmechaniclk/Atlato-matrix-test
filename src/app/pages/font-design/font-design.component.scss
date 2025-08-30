@@ -1,0 +1,76 @@
+.font-design-container {
+  padding: 1.5rem;
+}
+
+.typography-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.popover-trigger-wrapper {
+  flex-shrink: 0;
+}
+
+.current-settings,
+.no-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 300px;
+
+  .settings-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+  }
+
+  .settings-preview {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .default-message {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-style: italic;
+  }
+}
+
+.popover-content-wrapper {
+  width: 420px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+// Popover Frame Styles
+:host ::ng-deep {
+  .font-picker-popover {
+    .ant-popover-inner-content {
+      padding: 0 !important;
+      width: 420px !important;
+      height: 500px !important;
+      overflow: hidden !important;
+    }
+    .ant-popover-title {
+      font-weight: 500;
+      border-bottom: 1px solid #f0f0f0;
+    }
+  }
+}

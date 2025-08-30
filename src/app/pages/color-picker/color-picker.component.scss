@@ -1,0 +1,45 @@
+.square-color-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 0;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  position: relative;
+
+  &:focus {
+    border-color: transparent;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  .light-icon, .dark-icon {
+    position: absolute;
+    font-size: 14px;
+  }
+
+  .light-icon {
+    left: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .dark-icon {
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &.comparison-color-fallback {
+    background:
+      linear-gradient(45deg, #ccc 25%, transparent 25%),
+      linear-gradient(-45deg, #ccc 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ccc 75%),
+      linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 10px 10px;
+  }
+}

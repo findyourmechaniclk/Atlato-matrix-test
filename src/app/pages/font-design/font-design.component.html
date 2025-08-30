@@ -1,0 +1,44 @@
+<div class="font-design-container">
+  <div class="typography-controls">
+    <div class="popover-trigger-wrapper">
+      <button
+        nz-button
+        nzType="primary"
+        nz-popover
+        nzPopoverTitle="Typography Settings"
+        [nzPopoverContent]="popoverContent"
+        [nzPopoverTrigger]=null
+        nzPopoverPlacement="right"
+        [(nzPopoverVisible)]="isPopoverVisible"
+        (nzPopoverVisibleChange)="$event && handleOpen()"
+        nzPopoverOverlayClassName="font-picker-popover"
+        (click)="togglePopover()"
+      >
+        Open Typography Settings
+      </button>
+    </div>
+
+    <!-- Display current font settings with full details -->
+    <div class="current-settings" *ngIf="savedFontSettings">
+      <div class="settings-label">Current Typography:</div>
+      <div class="settings-preview" [title]="savedSettingsDisplay">
+        {{ savedSettingsDisplay }}
+      </div>
+    </div>
+
+    <!-- Default message when no settings saved -->
+    <div class="no-settings" *ngIf="!savedFontSettings">
+      <div class="settings-label">Typography:</div>
+      <div class="default-message">Default settings (Roboto Regular 18px)</div>
+    </div>
+  </div>
+</div>
+
+<ng-template #popoverContent>
+  <div class="popover-content-wrapper">
+    <app-common-font-picker
+      (save)="handleSave($event)"
+      (cancel)="handleClose()">
+    </app-common-font-picker>
+  </div>
+</ng-template>

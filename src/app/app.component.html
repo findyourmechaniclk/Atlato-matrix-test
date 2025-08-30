@@ -1,0 +1,42 @@
+<nz-layout style="height: 100vh">
+  <nz-header>
+    <div class="logo">Atlato Matrix</div>
+    <ul nz-menu nzTheme="dark" nzMode="horizontal">
+      <li
+        nz-menu-item
+        routerLink=""
+        routerLinkActive="ant-menu-item-selected"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Color
+      </li>
+      <li
+        nz-menu-item
+        routerLink="icon-picker"
+        routerLinkActive="ant-menu-item-selected"
+      >
+        Icon
+      </li>
+      <li
+        nz-menu-item
+        routerLink="font-design"
+        routerLinkActive="ant-menu-item-selected"
+      >
+        Font
+      </li>
+      <li
+        nz-menu-item
+        routerLink="dashboard"
+        routerLinkActive="ant-menu-item-selected"
+      >
+        Dashboard
+      </li>
+    </ul>
+  </nz-header>
+
+  <nz-content style="padding: 24px;">
+    <router-outlet>
+
+    </router-outlet>
+  </nz-content>
+</nz-layout>
