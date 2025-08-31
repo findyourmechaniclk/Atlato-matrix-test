@@ -19,6 +19,11 @@ interface LayoutSettingsJson {
   backgroundColor: string | null;
 }
 
+interface BackgroundSizeModeOption {
+  value: string;
+  label: string;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -37,11 +42,13 @@ interface LayoutSettingsJson {
 })
 export class DashboardComponent {
 
+  // Modal state
   isSettingsOpen = false;
+
+  // Background settings
   backgroundImage: string | null = null;
-  previewImage: string | null = null;
-  backgroundSizeMode: BackgroundSizeMode = 'fit-width';
-  backgroundSizeModes = [
+  backgroundSizeMode: BackgroundSizeMode = 'cover';
+  backgroundSizeModes: BackgroundSizeModeOption[] = [
     { value: 'fit-width', label: 'Fit width' },
     { value: 'fit-height', label: 'Fit height' },
     { value: 'cover', label: 'Cover' },
@@ -49,10 +56,7 @@ export class DashboardComponent {
     { value: 'original', label: 'Original size' }
   ];
 
-  showLinkInput = false;
-  tempImageLink = '';
-
-  // Layout settings for JSON output
+  // Layout settings
   columnsCount = 10;
   minLayoutWidth = 26;
   marginBetweenWidgets = 50;
@@ -60,28 +64,12 @@ export class DashboardComponent {
   autoFillLayoutHeight = true;
   backgroundColor: string | null = null;
 
-  // Live JSON preview
+  // Settings preview
   settingsPreview: LayoutSettingsJson = this.buildSettingsJson();
 
-  // Gallery
-  galleryVisible = false;
-  includeSystemImages = false;
-  gallery = [
-    {
-      url: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
-      name: 'Minimalist BakeShop Logo Design.png',
-      size: '1.4 MB',
-      dimensions: '1024x1024',
-    },
-    {
-      url: 'https://placekitten.com/300/200',
-      name: 'Cute Kitten.jpg',
-      size: '120 KB',
-      dimensions: '300x200',
-    },
-  ];
-
-  selectedGalleryImage: any = null;
+  constructor() {
+    this.updateSettingsPreview();
+  }
 
   get backgroundSizeModeCss(): string {
     switch (this.backgroundSizeMode) {
@@ -94,49 +82,40 @@ export class DashboardComponent {
     }
   }
 
-  closeLinkInputRow(): void {
-    this.showLinkInput = false; // just close the row; do not modify tempImageLink
-  }
-
   openSettings(): void {
     this.isSettingsOpen = true;
-    this.previewImage = this.backgroundImage;
-    this.showLinkInput = false;
-    this.tempImageLink = '';
-    // refresh JSON preview
     this.updateSettingsPreview();
   }
 
   closeSettings(): void {
     this.isSettingsOpen = false;
-    this.showLinkInput = false;
-    this.tempImageLink = '';
   }
 
-  // onFileSelected(event: Event): void {
-  //   const input = event.target as HTMLInputElement;
-  //   if (input.files && input.files[0]) {
-  //     const reader = new FileReader();
-  //     reader.onload = e => this.previewImage = reader.result as string;
-  //     reader.readAsDataURL(input.files[0]);
-  //   }
-  //   this.showLinkInput = false;
-  //   this.tempImageLink = '';
-  // }
+  saveSettings(settingsData: any): void {
+    this.columnsCount = settingsData.columnsCount;
+    this.minLayoutWidth = settingsData.minLayoutWidth;
+    this.marginBetweenWidgets = settingsData.marginBetweenWidgets;
+    this.applyMarginToSides = settingsData.applyMarginToSides;
+    this.autoFillLayoutHeight = settingsData.autoFillLayoutHeight;
+    this.backgroundColor = settingsData.backgroundColor;
+    this.backgroundSizeMode = settingsData.backgroundSizeMode;
 
-  setImageLink(): void {
-    if (this.tempImageLink && this.tempImageLink.trim().length > 0) {
-      this.previewImage = this.tempImageLink.trim();
-      this.showLinkInput = false;
+    if (settingsData.backgroundImage) {
+      this.backgroundImage = settingsData.backgroundImage;
     }
+
+    this.updateSettingsPreview();
+    this.closeSettings();
+
+    const json = this.buildSettingsJson();
+    console.log('Settings JSON output:', json);
   }
 
-  clearImageLink(): void {
-    this.tempImageLink = '';
-    this.showLinkInput = false;
+  onImageSelected(imageUrl: string): void {
+    this.backgroundImage = imageUrl;
+    this.updateSettingsPreview();
   }
 
-  // JSON helper methods
   private buildSettingsJson(): LayoutSettingsJson {
     return {
       columnsCount: this.columnsCount,
@@ -151,32 +130,4 @@ export class DashboardComponent {
   updateSettingsPreview(): void {
     this.settingsPreview = this.buildSettingsJson();
   }
-
-  saveSettings(): void {
-    // JSON output (added; non-breaking)
-    const json = this.buildSettingsJson();
-    console.log('Settings JSON output:', json);
-    console.log('Settings JSON string:', JSON.stringify(json));
-
-    if (this.showLinkInput && this.tempImageLink && this.tempImageLink.trim().length > 0) {
-      this.previewImage = this.tempImageLink.trim();
-      this.showLinkInput = false;
-    }
-    this.backgroundImage = this.previewImage;
-    this.closeSettings();
-  }
-
-  // Gallery actions
-  openGallery(): void {
-    this.galleryVisible = true;
-    this.selectedGalleryImage = null;
-  }
-  closeGallery(): void {
-    this.galleryVisible = false;
-  }
-  selectGalleryImage(img: any): void {
-    this.previewImage = img.url;
-    this.closeGallery();
-  }
 }
-

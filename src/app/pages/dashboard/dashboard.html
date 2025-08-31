@@ -1,3 +1,5 @@
+<!-- dashboard.component.html -->
+
 <!-- BACKGROUND IMAGE WRAPPER -->
 <div class="dashboard-bg" *ngIf="backgroundImage"
      [ngStyle]="{
@@ -10,7 +12,7 @@
 <!-- SETTINGS BUTTON -->
 <button nz-button nzType="primary" class="settings-btn" (click)="openSettings()">Settings</button>
 
-<!-- JSON output shown on the dashboard (moved out of modal; inline styles so no CSS changes) -->
+<!-- JSON output shown on the dashboard -->
 <div style="position: relative; z-index: 10; margin: 12px 0 0 32px; max-width: 720px;">
   <label style="display:block; font-weight:600; color:#333; margin-bottom:6px;">Current settings JSON</label>
   <pre style="
@@ -26,199 +28,22 @@
     ">{{ settingsPreview | json }}</pre>
 </div>
 
-<!-- SETTINGS MODAL (using pop-over component) -->
+<!-- DASHBOARD SETTINGS MODAL -->
 <app-dashboard-setting-pop-over
   [visible]="isSettingsOpen"
-  [title]="'Settings'"
-  [width]="'700px'"
+  [settingsData]="{
+    columnsCount: columnsCount,
+    minLayoutWidth: minLayoutWidth,
+    marginBetweenWidgets: marginBetweenWidgets,
+    applyMarginToSides: applyMarginToSides,
+    autoFillLayoutHeight: autoFillLayoutHeight,
+    backgroundColor: backgroundColor,
+    backgroundSizeMode: backgroundSizeMode,
+    backgroundSizeModes: backgroundSizeModes,
+    backgroundImage: backgroundImage
+  }"
   (close)="closeSettings()"
->
-  <form (ngSubmit)="saveSettings()" autocomplete="off">
-    <!-- simple layout settings above background image; unchanged behavior -->
-    <div class="form-section">
-      <label>Columns count</label>
-      <nz-input-number
-        [(ngModel)]="columnsCount"
-        name="columnsCount"
-        [nzMin]="1"
-        [nzStep]="1"
-        (ngModelChange)="updateSettingsPreview()"
-      ></nz-input-number>
-    </div>
-
-    <div class="form-section">
-      <label>Minimum layout width</label>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <nz-input-number
-          [(ngModel)]="minLayoutWidth"
-          name="minLayoutWidth"
-          [nzMin]="1"
-          [nzStep]="1"
-          (ngModelChange)="updateSettingsPreview()"
-        ></nz-input-number>
-        <span style="color:#888;font-size:12px;">columns</span>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <label>Margin between widgets</label>
-      <nz-input-number
-        [(ngModel)]="marginBetweenWidgets"
-        name="marginBetweenWidgets"
-        [nzMin]="0"
-        [nzStep]="1"
-        (ngModelChange)="updateSettingsPreview()"
-      ></nz-input-number>
-    </div>
-
-    <div class="form-section">
-      <label>Apply margin to the sides of the layout</label>
-      <div>
-        <nz-switch
-          [(ngModel)]="applyMarginToSides"
-          name="applyMarginToSides"
-          (ngModelChange)="updateSettingsPreview()"
-        ></nz-switch>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <label>Auto fill layout height</label>
-      <div>
-        <nz-switch
-          [(ngModel)]="autoFillLayoutHeight"
-          name="autoFillLayoutHeight"
-          (ngModelChange)="updateSettingsPreview()"
-        ></nz-switch>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <label>Background colour</label>
-      <input
-        type="color"
-        [(ngModel)]="backgroundColor"
-        name="backgroundColor"
-        (ngModelChange)="updateSettingsPreview()"
-      />
-    </div>
-
-    <!-- Removed: JSON preview inside the modal (now shown on dashboard) -->
-
-    <!-- Existing: Background image -->
-    <div class="form-section">
-      <label class="section-label">Background image</label>
-      <div class="image-row">
-        <div class="image-preview-large">
-          <ng-container *ngIf="previewImage; else noImage">
-            <img [src]="previewImage" alt="Selected"/>
-          </ng-container>
-          <ng-template #noImage>
-            <span class="no-image">No image<br/>selected</span>
-          </ng-template>
-        </div>
-
-        <ng-container *ngIf="showLinkInput; else buttonRow">
-          <div class="link-input-col">
-            <label class="link-label">Image link</label>
-            <div class="link-input-wrapper">
-              <input
-                nz-input
-                type="url"
-                [(ngModel)]="tempImageLink"
-                name="imageLink"
-                placeholder="Paste image URL"
-                class="link-input"
-                autocomplete="off"
-              />
-
-              <!-- Clear text -->
-              <button
-                nz-button
-                nzType="text"
-                type="button"
-                class="clear-link-btn"
-                (click)="clearImageLink()"
-                title="Clear text"
-              >
-                <span nz-icon nzType="close-circle"></span>
-              </button>
-
-              <!-- Apply link -->
-              <button
-                nz-button
-                nzType="default"
-                type="button"
-                class="apply-link-btn"
-                (click)="setImageLink()"
-              >
-                Set
-              </button>
-
-              <!-- Close link row -->
-              <button
-                nz-button
-                nzType="text"
-                type="button"
-                class="close-row-btn"
-                (click)="closeLinkInputRow()"
-                title="Close"
-              >
-                <span nz-icon nzType="close"></span>
-              </button>
-            </div>
-          </div>
-        </ng-container>
-
-        <ng-template #buttonRow>
-          <div class="image-actions">
-            <button nz-button nzType="default" class="gallery-btn" type="button" (click)="openGallery()">
-              <span nz-icon nzType="picture"></span>
-              <span>Browse from gallery</span>
-            </button>
-            <button nz-button nzType="default" class="link-btn" type="button" (click)="showLinkInput = true">
-              <span nz-icon nzType="link"></span>
-              <span>Set link</span>
-            </button>
-          </div>
-        </ng-template>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <label>Background size mode</label>
-      <select [(ngModel)]="backgroundSizeMode" name="bgsize">
-        <option *ngFor="let mode of backgroundSizeModes" [value]="mode.value">{{ mode.label }}</option>
-      </select>
-    </div>
-  </form>
-
-  <!-- Sticky footer buttons projected into the modal -->
-  <div modal-footer>
-    <button nz-button nzType="default" type="button" (click)="closeSettings()">Cancel</button>
-    <button nz-button nzType="primary" type="button" (click)="saveSettings()">Save</button>
-  </div>
-</app-dashboard-setting-pop-over>
-
-<!-- IMAGE GALLERY MODAL (can also use the popover for this) -->
-<app-dashboard-setting-pop-over
-  [visible]="galleryVisible"
-  [title]="'Image gallery'"
-  [width]="'1100px'"
-  (close)="closeGallery()"
->
-  <div class="gallery-list">
-    <div *ngFor="let img of gallery" class="gallery-card" [class.selected]="img === selectedGalleryImage">
-      <img [src]="img.url" alt="img" class="gallery-card-img"/>
-      <div class="gallery-card-info">
-        <div class="gallery-card-title">{{ img.name }}</div>
-        <div class="gallery-card-meta">{{ img.size }} | {{ img.dimensions }}</div>
-      </div>
-      <button nz-button nzType="primary" class="gallery-select-btn" (click)="selectGalleryImage(img)">Select</button>
-    </div>
-  </div>
-
-  <div modal-footer>
-    <button nz-button nzType="default" type="button" (click)="closeGallery()">Close</button>
-  </div>
-</app-dashboard-setting-pop-over>
+  (save)="saveSettings($event)"
+  (imageSelected)="onImageSelected($event)"
+  (settingsChanged)="updateSettingsPreview()"
+></app-dashboard-setting-pop-over>

@@ -1,27 +1,78 @@
+<!-- image-gallery-pop-over.component.html -->
+
 <ng-container *ngIf="visible">
   <div class="custom-modal-overlay">
-    <div class="custom-modal-card" style="width:1100px">
+    <div class="custom-modal-card" style="width: 1100px;">
+
+      <!-- Modal Header -->
       <div class="custom-modal-header">
-        <span class="custom-modal-title">Image gallery</span>
-        <button class="custom-modal-close" (click)="close.emit()" aria-label="Close" type="button">
+        <span class="custom-modal-title">Image Gallery</span>
+        <button class="custom-modal-close" (click)="closeModal()" aria-label="Close" type="button">
           <span nz-icon nzType="close"></span>
         </button>
       </div>
+
+      <!-- Modal Body -->
       <div class="custom-modal-body">
+
+        <!-- Gallery Options -->
+        <div class="gallery-options">
+          <div class="option-item">
+            <label>Include system images</label>
+            <nz-switch
+              [(ngModel)]="includeSystemImages"
+              (ngModelChange)="onSystemImagesToggle()"
+            ></nz-switch>
+          </div>
+        </div>
+
+        <!-- Gallery Grid -->
         <div class="gallery-list">
-          <div *ngFor="let img of gallery" class="gallery-card" [class.selected]="img === selectedGalleryImage">
+          <div
+            *ngFor="let img of displayedGallery"
+            class="gallery-card"
+            [class.selected]="img === selectedGalleryImage"
+            (click)="selectGalleryImage(img)"
+          >
             <img [src]="img.url" alt="img" class="gallery-card-img"/>
             <div class="gallery-card-info">
               <div class="gallery-card-title">{{ img.name }}</div>
               <div class="gallery-card-meta">{{ img.size }} | {{ img.dimensions }}</div>
             </div>
-            <button nz-button nzType="primary" class="gallery-select-btn" (click)="selectGalleryImage(img)">Select</button>
+            <div class="selection-indicator" *ngIf="img === selectedGalleryImage">
+              <span nz-icon nzType="check-circle" nzTheme="fill"></span>
+            </div>
           </div>
         </div>
+
+        <!-- Empty State -->
+        <div *ngIf="displayedGallery.length === 0" class="empty-gallery">
+          <span nz-icon nzType="picture" class="empty-icon"></span>
+          <p>No images available in the gallery</p>
+        </div>
+
       </div>
+
+      <!-- Modal Footer -->
       <div class="custom-modal-footer">
-        <button nz-button nzType="default" type="button" (click)="close.emit()">Close</button>
+        <div class="footer-info">
+          <span *ngIf="selectedGalleryImage">Selected: {{ selectedGalleryImage.name }}</span>
+          <span *ngIf="!selectedGalleryImage">Select an image to continue</span>
+        </div>
+        <div class="footer-actions">
+          <button nz-button nzType="default" type="button" (click)="closeModal()">Cancel</button>
+          <button
+            nz-button
+            nzType="primary"
+            type="button"
+            (click)="confirmSelection()"
+            [disabled]="!selectedGalleryImage"
+          >
+            Select Image
+          </button>
+        </div>
       </div>
+
     </div>
   </div>
 </ng-container>
